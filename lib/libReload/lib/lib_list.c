@@ -1,0 +1,193 @@
+/*
+** lib_list.c for lib_list in /home/aurel/libReload
+** 
+** Made by Pigot Aurélien
+** Login   <pigot_a@etna-alternance.net>
+** 
+** Started on  Wed Apr 29 13:25:21 2015 Pigot Aurélien
+** Last update Wed Apr 29 13:27:33 2015 Pigot Aurélien
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include "../lib_list.h"
+#include "../lib.h"
+
+typedef struct item
+{
+  struct item *next;
+  void *data;
+  void *key;
+  int is_required;
+} item_s;
+
+struct sll
+{
+  item_s *p_start;
+  item_s *list;
+};
+
+sll_s *sll_new (void)
+{
+  sll_s *p_sll = malloc (sizeof *p_sll);
+
+  if (p_sll)
+    {
+      item_s *p_l = malloc (sizeof *p_l);
+
+      if (p_l)
+	{
+	  p_l->data = NULL;
+	  p_l->key = NULL;
+	  p_l->is_required = 3;
+	  p_l->next = NULL;
+
+	  p_sll->p_start = p_l;
+	  p_sll->list = NULL;
+	}
+      else
+	{
+	  my_error("No memory");
+	  return (NULL);
+	}
+    }
+  else
+    {
+      my_error("No memory");
+	  return(NULL);
+    }
+  return p_sll;
+}
+
+void sll_insert (sll_s * p_sll, void *data, void *key, int is_required)
+{
+  if (p_sll)
+    {
+      item_s *p_l = p_sll->list;
+      item_s *p_n = NULL;
+
+      p_n = malloc (sizeof (*p_n));
+      if (p_n)
+	{
+	  p_n->data = data;
+	  p_n->key = key;
+	  p_n->is_required = is_required;
+	  if (p_l == NULL)
+	    {
+	      p_sll->p_start->next = p_n;
+	      p_n->next = NULL;
+	    }
+	  else
+	    {
+	      p_n->next = p_l->next;
+	      p_l->next = p_n;
+	    }
+	  p_sll->list = p_n;
+	}
+      else
+	{
+	  my_error("No memory");
+	  return;
+
+	}
+    }
+}
+
+void sll_removeNext (sll_s * p_sll)
+{
+  if (p_sll && p_sll->list)
+    {
+      item_s *p_l = p_sll->list;
+      item_s *p_n = NULL;
+
+      p_n = p_l->next;
+      p_l->next = p_n->next;
+      free (p_n);
+      p_n = NULL;
+    }
+}
+
+void sll_removeFirst (sll_s * p_sll)
+{
+  if (p_sll)
+    {
+      p_sll->list = p_sll->p_start;
+      sll_removeNext (p_sll);
+    }
+}
+
+void sll_next (sll_s * p_sll)
+{
+  if (p_sll && p_sll->list)
+    {
+      p_sll->list = p_sll->list->next;
+    }
+}
+
+void *sll_data (sll_s * p_sll)
+{
+  return ((p_sll && p_sll->list) ? p_sll->list->data : NULL);
+}
+
+void *sll_key (sll_s * p_sll)
+{
+  return ((p_sll && p_sll->list) ? p_sll->list->key : NULL);
+}
+
+int sll_is_req (sll_s *p_sll)
+{
+  return ((p_sll && p_sll->list) ? p_sll->list->is_required : 3);
+}
+
+void sll_first (sll_s * p_sll)
+{
+  if (p_sll)
+    {
+      p_sll->list = p_sll->p_start->next;
+    }
+}
+
+void sll_last (sll_s * p_sll)
+{
+  if (p_sll)
+    {
+      while (p_sll->list->next != NULL)
+	{
+	  sll_next (p_sll);
+	}
+    }
+}
+
+size_t sll_sizeof (sll_s * p_sll)
+{
+  size_t n = 0;
+
+  if (p_sll)
+    {
+      sll_first (p_sll);
+      while (p_sll->list != NULL)
+	{
+	  n++;
+	  sll_next (p_sll);
+	}
+    }
+  return n;
+}
+
+void sll_delete (sll_s ** pp_sll)
+{
+  if (pp_sll && *pp_sll)
+    {
+      sll_first (*pp_sll);
+
+      while ((*pp_sll)->list->next != NULL)
+	{
+	  sll_removeNext (*pp_sll);
+	}
+      sll_removeFirst (*pp_sll);
+      free ((*pp_sll)->list);
+      (*pp_sll)->list = NULL;
+      free (*pp_sll), *pp_sll = NULL;
+    }
+}

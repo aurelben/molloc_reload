@@ -1,0 +1,34 @@
+#include "../lib.h"
+
+int my_error(char *message) 
+{
+  if(message) 
+    {
+    my_putstr("Errno value: ");
+    my_putstr("\n");
+    perror(message);
+    log_error(message);
+    return (1);
+    }
+  return (0);
+}
+
+void log_error(char *message) 
+{
+  FILE *file;
+  time_t rowtime;
+  time(&rowtime);
+  file = fopen("error.log", "at");
+  if(file == NULL)
+    {
+    my_putstr("log file can't be writed");
+    return;
+    }
+  fputs(ctime(&rowtime), file);
+  fputs (message, file);
+  fputs(": ", file);
+  fputs(strerror(errno), file);
+  fputs ("\n", file);
+  fclose(file);
+
+}

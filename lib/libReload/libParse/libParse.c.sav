@@ -1,0 +1,21 @@
+#include "../lib.h"
+#include "../lib_kust.h"
+
+
+
+void add_option(void *option, int is_required, void *data)
+{
+  sll_s *p_sll;
+  p_sll = NULL;
+  p_sll = sll_new();
+
+  sll_insert (p_sll, option, data, is_required);
+
+}
+
+void *check_option(char *option) 
+{
+  
+}
+
+
