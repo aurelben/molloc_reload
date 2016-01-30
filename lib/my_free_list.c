@@ -14,8 +14,8 @@
 #include "my_free_list.h"
 
 
-
-block_t*  un_free(block_t** freelist, int index){
+//remove head
+block_t *un_free(block_t **freelist, int index){
 	block_t* head = freelist[index];
 	//really simple
 	freelist[index] = head->next;
@@ -25,4 +25,30 @@ block_t*  un_free(block_t** freelist, int index){
 	head->next = NULL;
 	head->prev = NULL;
 	return head;
+}
+
+//add to back
+block_t *add_list_last(block_t **freelist, int index, block_t block_node){
+	block_t block_list = freelist[index];
+
+	if (block_list == NULL)
+	{
+		freelist[index] = block_node;
+		block_node->next = NULL;
+		block_node-> = NULL;
+
+		return (block_node);
+	}
+
+	block_t safe_copy =  block_list;
+
+	while( safe_copy->next != NULL) {
+		safe_copy = safe_copy->next;
+	}
+	safe_copy->next = block_node;
+	block_node->prev = safe_copy;
+	block_node->next = NULL;
+
+	return (block_node);
+
 }

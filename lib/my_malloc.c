@@ -95,6 +95,12 @@ void    *my_sbrk(int block_size) {
     return (res);
 }
 
+/**
+ * 
+ * @param  int block_size size of the block we need 
+ * @return  void*   pointeur to mem block we ask + size of block_t struct 
+ * for pointer storage
+ */
 void    *my_super_brk(int block_size) {
     void    *res;
     int    index;
@@ -110,7 +116,7 @@ void    *my_super_brk(int block_size) {
     if (size > DEFAULT_SIZE){
       index = 9;
     } else {
-      get_index(size);
+      index = get_index(size);
     }
 
     block_t* heap_block = (block_t*)res;
@@ -167,6 +173,25 @@ int    get_bigger(int index, int size) {
     }
 
     return(find_flag);
+}
+
+/**
+ *
+ * need to finish it, prob with block size of my struct
+ */
+
+void my_slice_block(int block_idx, int new_size_idx) {
+  int i;
+  
+  for (i = block_idx ; i > new_size_idx; --i)
+  {
+    block_t bigger = un_free(freelist, i);
+
+    bigger->size = bigger->size / 2;
+
+    block_t new_block = 
+    
+  }
 }
 
 
