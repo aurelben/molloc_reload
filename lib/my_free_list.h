@@ -7,8 +7,8 @@
 
 typedef struct block
 {
-  short in_use;
-  short size;
+  int in_use;
+  int size;
   struct block* next;
   struct block* prev;
 } block_t;
@@ -16,11 +16,11 @@ typedef struct block
 
 
 block_t*     un_free(block_t** freelist, int index);
-block_t*     add_to_back(block_t** freelist,int index, block_t* node);
+//block_t*     add_to_back(block_t** freelist,int index, block_t* node);
 void     printListSizes(block_t** freelist);
 block_t*     removeNode(block_t** freelist, int index,block_t* node);
+block_t *add_list_last(block_t **freelist, int index, block_t *block_node);
 
-extern block_t* freelist[8];
 
 
 #endif /* __MY_FREE_LIST_H__ */
