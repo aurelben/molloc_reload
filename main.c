@@ -31,16 +31,16 @@ int main (void)
   for (i = 0; i < 800; ++i)
   {
   	printf("--------------------------ROUND %d----------------------------------\n", i);
-		tmp = my_malloc(64);
+		tmp = my_malloc(128);
                 printf("memset 1\n");
                 memset(tmp, '$', 32);
                 //printf("memset res is: %s\n", (char*)res);
 		printf("------------------------------------------------------------\n");
-		tmp = my_malloc(64);
-                memset(tmp, '$', 32);
+		/*tmp = my_malloc(64);
+                memset(tmp, '$', 64);
                 printf("memset 2\n");
                 //printf("memset res is: %s\n", (char*)res);
-		printf("------------------------------------------------------------\n");
+		printf("------------------------------------------------------------\n");*/
   }
   
   printf("END ------------------ testing my_malloc\n");
