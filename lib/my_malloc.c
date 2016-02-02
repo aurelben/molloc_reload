@@ -20,18 +20,18 @@
 #define DEFAULT_SIZE 2048
 
 
-void    *heap;
+void    *heap = NULL;
 
 block_t *freelist[8];
 /**** SIZES FOR THE FREE LIST ****
- * freelist[0] -> 16
- * freelist[1] -> 32
- * freelist[2] -> 64
- * freelist[3] -> 128
- * freelist[4] -> 256
- * freelist[5] -> 512
- * freelist[6] -> 1024
- * freelist[7] -> 2048
+ * freelist[0] -> 32
+ * freelist[1] -> 64
+ * freelist[2] -> 128
+ * freelist[3] -> 256
+ * freelist[4] -> 512
+ * freelist[5] -> 1024
+ * freelist[6] -> 2048
+ * freelist[7] -> 2049 and more
  */
 
 
@@ -43,7 +43,10 @@ block_t *freelist[8];
 int     get_index(int malloc_size) {
     int index; 
 
-    if (malloc_size > 2048) {
+    if (malloc_size <= 32)
+        return 0;
+
+    if (malloc_size > DEFAULT_SIZE) {
         index = -1;
         return (index);
     }
@@ -52,7 +55,7 @@ int     get_index(int malloc_size) {
 
     printf("get_index index value %d and asked malloc size is %d\n", index-4, malloc_size );
 
-    return (index-4);
+    return (index-5);
 }
 
 
@@ -61,7 +64,7 @@ int     get_index(int malloc_size) {
  * @return [description]
  */
 void    *init_heap() {
-    heap = my_sbrk(DEFAULT_SIZE +sizeof(block_t));
+    heap = my_sbrk(DEFAULT_SIZE);
     int i;
 
     if (heap == NULL)
@@ -73,7 +76,7 @@ void    *init_heap() {
       freelist[i] = NULL;
     }
 
-    block_t* heap_block = (block_t*)heap+sizeof(block_t);
+    block_t* heap_block = (block_t*)heap;
     heap_block->in_use = 0;
     heap_block->size = DEFAULT_SIZE;
     heap_block->next = NULL;
@@ -109,7 +112,7 @@ void    *my_super_brk(int block_size) {
     double size;
     //size = (double)block_size+sizeof(block_t);
     size = block_size;
-    res = sbrk(size+sizeof(block_t));
+    res = sbrk(size);
     
     if(res == (void*)-1) {
             ERRNO=OUT_OF_MEMORY;
@@ -122,14 +125,15 @@ void    *my_super_brk(int block_size) {
       index = get_index(size);
     }
 
-    block_t* heap_block = (block_t*)res+sizeof(block_t);
+    block_t* heap_block = (block_t*)res;
     heap_block->in_use = 0;
     heap_block->size = block_size;
     heap_block->next = NULL;
     heap_block->prev = NULL;
-    freelist[index] = heap_block;
 
-    return (freelist[index]);
+    add_list_last(freelist, index, heap_block);
+
+    return heap_block;
 }
 
 int     my_log(int n, int b)
@@ -148,7 +152,7 @@ void    *get_block(int index, int size) {
      my_block = un_free(freelist, index);
      my_block->in_use = 1;
     
-     return (my_block+sizeof(block_t));
+     return (my_block+1);
      
   } else {
     //else check for bigger one
@@ -161,15 +165,19 @@ void    *get_block(int index, int size) {
        * sbrk a bigger heap and stor it in index 8 of freelist
        * where all block grearter than DEFAULT_SIZE are stored
        */
-       my_new_block =  my_super_brk(DEFAULT_SIZE + sizeof(block_t));
-       my_slice_block(7, index);
+       my_new_block =  my_sbrk(size);
+       my_new_block->size = size;
+       my_new_block->prev = NULL;
+       my_new_block->next = NULL;
+       my_new_block->in_use = 1;
+       return (my_new_block+1);
     }
     printf("get_block index is%d\n", index);
     my_block = un_free(freelist, index);
     printf("get_block my_block adresse is %d\n", my_block);
     my_block->in_use = 1;
     ERRNO= NO_ERROR;
-    return ((void*)(((char*)my_block)+sizeof(block_t)));
+    return (my_block+1);
    
   }
 }
@@ -212,11 +220,15 @@ void my_slice_block(int block_idx, int new_size_idx) {
 
     //nouvelle moitié
     printf("========= my_slice_block decalage %d\n", bigger + bigger->size);
-    block_t *new_block = (block_t *)((char *)bigger + bigger->size+sizeof(block_t));
+    block_t *new_block = (block_t *)((char *)bigger + bigger->size);
     new_block->size = bigger->size;
     new_block->in_use = 0;
     new_block->next = NULL;
-    new_block->prev = bigger;
+    new_block->prev = NULL;
+
+    bigger->in_use = 0;
+    bigger->prev = NULL;
+    bigger->next = NULL;
 
     add_list_last(freelist, i-1, bigger);
     add_list_last(freelist, i-1, new_block);
