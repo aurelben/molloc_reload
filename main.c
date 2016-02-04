@@ -30,7 +30,7 @@ int main (void)
   //void *malloc_res;
   
   int i;
-  for (i = 0; i < 80000; ++i)
+  for (i = 0; i < 800; ++i)
   {
   	printf("--------------------------ROUND %d----------------------------------\n", i);
 		tmp = my_malloc(512);
