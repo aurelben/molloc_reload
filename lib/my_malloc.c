@@ -299,7 +299,7 @@ void my_free(void *ptr) {
   if (my_block->in_use == -1){
     //printf("in_use is %d\n",my_block->in_use );
     //printf("free error\n" );
-    exit(0);
+    return;
   }
   
   if (my_block->in_use == 1)
