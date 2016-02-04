@@ -28,5 +28,6 @@ int     get_index(int malloc_size);
 void    *get_block(int index, int size);
 int    get_bigger(int index);
 void my_slice_block(int block_idx, int new_size_idx);
+void my_free(void *ptr);
 
 #endif /* __MY_MALLOC_H__ */

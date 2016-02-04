@@ -51,9 +51,7 @@ int     get_index(int malloc_size) {
         return (index);
     }
 
-    index = my_log(malloc_size, 2);
-
-    printf("get_index index value %d and asked malloc size is %d\n", index-4, malloc_size );
+    index = my_log(malloc_size-1, 2)+1;
 
     return (index-5);
 }
@@ -77,13 +75,13 @@ void    *init_heap() {
     }
 
     block_t* heap_block = (block_t*)heap;
-    heap_block->in_use = 0;
+    heap_block->in_use = -1;
     heap_block->size = DEFAULT_SIZE;
     heap_block->next = NULL;
     heap_block->prev = NULL;
     freelist[get_index(DEFAULT_SIZE)] = heap_block;
 
-    printf("sizeof heap_block struc %d\n", (int)sizeof(block_t*) );    
+    //printf("sizeof heap_block struc %d\n", (int)sizeof(block_t*) );    
     return(heap);
 }
 
@@ -126,7 +124,7 @@ void    *my_super_brk(int block_size) {
     }
 
     block_t* heap_block = (block_t*)res;
-    heap_block->in_use = 0;
+    heap_block->in_use = -1;
     heap_block->size = block_size;
     heap_block->next = NULL;
     heap_block->prev = NULL;
@@ -148,7 +146,7 @@ void    *get_block(int index, int size) {
   int bigindex;
   //check if block of size we need is here
   if (freelist[index] != NULL) {
-    printf("*************** get_block check if block of size we need is here\n");
+    //printf("*************** get_block check if block of size we need is here\n");
      my_block = un_free(freelist, index);
      my_block->in_use = 1;
     
@@ -162,19 +160,22 @@ void    *get_block(int index, int size) {
        my_slice_block(bigindex, index);
     } else {
       /**
-       * sbrk a bigger heap and stor it in index 8 of freelist
+       * sbrk a bigger heap and stor it in index 7 of freelist
        * where all block grearter than DEFAULT_SIZE are stored
        */
+       //printf("*************** get_block new sbrk \n");
        my_new_block =  my_sbrk(size);
        my_new_block->size = size;
        my_new_block->prev = NULL;
        my_new_block->next = NULL;
        my_new_block->in_use = 1;
+       //freelist[7] = my_new_block;
        return (my_new_block+1);
+       //my_slice_block(7, index);
     }
-    printf("get_block index is%d\n", index);
+    //printf("get_block index is%d\n", index);
     my_block = un_free(freelist, index);
-    printf("get_block my_block adresse is %d\n", my_block);
+    //printf("get_block my_block adresse is %d\n", my_block);
     my_block->in_use = 1;
     ERRNO= NO_ERROR;
     return (my_block+1);
@@ -205,28 +206,28 @@ void my_slice_block(int block_idx, int new_size_idx) {
   int i;
   block_t *bigger;
 
-  printf("my_slice_block block_idx is %d, new_size_idx is %d\n",block_idx, new_size_idx );
+  //printf("my_slice_block block_idx is %d, new_size_idx is %d\n",block_idx, new_size_idx );
 
   
   for (i = block_idx ; i > new_size_idx; --i)
   {
-    printf("========= my_slice_block freelist node is %d AND next is %d \n",freelist[i], freelist[i]->next);
+    //printf("========= my_slice_block freelist node is %d AND next is %d \n",freelist[i], freelist[i]->next);
     bigger = un_free(freelist, i);
-    printf("========= my_slice_block adresse de block_t *bigger: %d loop var i is %d \n", bigger, i);
+    //printf("========= my_slice_block adresse de block_t *bigger: %d loop var i is %d \n", bigger, i);
     //exit(0);
-    printf("========= my_slice_block bigger size before /2 %d\n", bigger->size);
+    //printf("========= my_slice_block bigger size before /2 %d\n", bigger->size);
     bigger->size /= 2;
-    printf("========= my_slice_block bigger size after /2 %d\n", bigger->size);
+    //printf("========= my_slice_block bigger size after /2 %d\n", bigger->size);
 
     //nouvelle moitié
-    printf("========= my_slice_block decalage %d\n", bigger + bigger->size);
+    //printf("========= my_slice_block decalage %d\n", bigger + bigger->size);
     block_t *new_block = (block_t *)((char *)bigger + bigger->size);
     new_block->size = bigger->size;
-    new_block->in_use = 0;
+    new_block->in_use = -1;
     new_block->next = NULL;
     new_block->prev = NULL;
 
-    bigger->in_use = 0;
+    bigger->in_use = -1;
     bigger->prev = NULL;
     bigger->next = NULL;
 
@@ -234,7 +235,7 @@ void my_slice_block(int block_idx, int new_size_idx) {
     add_list_last(freelist, i-1, new_block);
     
   }
-  printf("OUT my_slice_block \n\n\n");
+  //printf("OUT my_slice_block \n\n\n");
 }
 
 
@@ -243,42 +244,76 @@ void     *my_malloc    (size_t block_size)
   int asked_size;
   int index;
   void * new_block;
-  printf("my_malloc var block_size %d\n", block_size + sizeof(block_t));
+  block_t *my_new_block;
+  //printf("my_malloc var block_size %d\n", block_size + sizeof(block_t));
   asked_size = (int)(block_size + sizeof(block_t));
-  printf("IN malloc asked_size %d\n", asked_size);
-  printf("++++++++++++ my_malloc sizeof block_t %d and sizeof var block_size %d\n", sizeof(block_t), sizeof(block_size));
+  //printf("IN malloc asked_size %d\n", asked_size);
+  //printf("++++++++++++ my_malloc sizeof block_t %d and sizeof var block_size %d\n", sizeof(block_t), sizeof(block_size));
 
   //if not heap, init it
   if (!heap)
   {
     heap = init_heap();
     //my_slice_block(7, 0);
-    printf("first use\n");
+    //printf("first use\n");
   }
 
   if (asked_size > DEFAULT_SIZE)
   {
-    return (my_sbrk(asked_size));
+    my_new_block =  my_sbrk(asked_size);
+       my_new_block->size = asked_size;
+       my_new_block->prev = NULL;
+       my_new_block->next = NULL;
+       my_new_block->in_use = 1;
+       //freelist[7] = my_new_block;
+       return (my_new_block+1);
   }
   index = get_index(asked_size);
   
   new_block = get_block(index, asked_size);
 
-  printf("my_malloc heap value %d\n", heap );
+  //printf("my_malloc heap value %d\n", heap );
 
   //printf("my_malloc freelist index value %d AND freelist next is: %d\n", freelist[index], freelist[index]->next);
 
-  printf("my_malloc new_block value is: %d\n", new_block);
+  //printf("my_malloc new_block value is: %d\n", new_block);
   int j;
-  for ( j = 0; j < 7; ++j)
+  /*for ( j = 0; j < 7; ++j)
   {
     printf("freelist index is %d AND value is %d AND next is %d\n",j ,freelist[j], freelist[j]->next);
-  }
+  }*/
 
-  printf("OUT malloc \n\n\n");
+  //printf("OUT malloc \n\n\n");
 
   return (new_block);
 
+}
+
+void my_free(void *ptr) {
+
+  block_t *my_block; 
+  int index;
+
+  my_block = (block_t*) ( (char*)ptr - sizeof(block_t) );
+
+  if (my_block->in_use == -1){
+    printf("in_use is %d\n",my_block->in_use );
+    printf("free error\n" );
+  }
+  
+  if (my_block->in_use == 1)
+  {
+    index = get_index(my_block->size);
+    my_block->in_use = -1;
+    add_list_last(freelist, index, my_block);
+    printf("free ok\n" );
+    return;    
+  }
+
+  if (my_block->in_use != 1 && my_block->in_use != -1)
+  {
+    printf("NOT block_t\n" );
+  }
 }
 
 
