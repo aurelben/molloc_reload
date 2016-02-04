@@ -16,11 +16,11 @@
 
 //remove head
 block_t *un_free(block_t **freelist, int index){
-	printf("un_free var int index is %d\n", index);
+	//printf("un_free var int index is %d\n", index);
 
 	block_t* head = freelist[index];
 
-	printf("un_free var block_t head is %d AND head->next is: %d\n", head, head->next);
+	//printf("un_free var block_t head is %d AND head->next is: %d\n", head, head->next);
 	//really simple
 	freelist[index] = head->next;
 	if(((block_t*)freelist[index])!=NULL){
@@ -28,7 +28,7 @@ block_t *un_free(block_t **freelist, int index){
 	}
 	head->next = NULL;
 	head->prev = NULL;
-	printf("OUT OF UN_FREE\n\n");
+	//printf("OUT OF UN_FREE\n\n");
 	return head;
 }
 

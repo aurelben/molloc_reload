@@ -277,7 +277,7 @@ void     *my_malloc    (size_t block_size)
   //printf("my_malloc freelist index value %d AND freelist next is: %d\n", freelist[index], freelist[index]->next);
 
   //printf("my_malloc new_block value is: %d\n", new_block);
-  int j;
+  //int j;
   /*for ( j = 0; j < 7; ++j)
   {
     printf("freelist index is %d AND value is %d AND next is %d\n",j ,freelist[j], freelist[j]->next);
@@ -297,8 +297,9 @@ void my_free(void *ptr) {
   my_block = (block_t*) ( (char*)ptr - sizeof(block_t) );
 
   if (my_block->in_use == -1){
-    printf("in_use is %d\n",my_block->in_use );
-    printf("free error\n" );
+    //printf("in_use is %d\n",my_block->in_use );
+    //printf("free error\n" );
+    exit(0);
   }
   
   if (my_block->in_use == 1)
@@ -306,13 +307,14 @@ void my_free(void *ptr) {
     index = get_index(my_block->size);
     my_block->in_use = -1;
     add_list_last(freelist, index, my_block);
-    printf("free ok\n" );
+    //printf("free ok\n" );
     return;    
   }
 
   if (my_block->in_use != 1 && my_block->in_use != -1)
   {
-    printf("NOT block_t\n" );
+    //printf("NOT block_t\n" );
+    return
   }
 }
 
