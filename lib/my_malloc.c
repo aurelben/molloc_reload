@@ -310,10 +310,9 @@ void *my_free(void *ptr) {
   }
 
   if (my_block->in_use != 1 && my_block->in_use != -1)
-  {
-    //printf("NOT block_t\n" );
     return (0);
-  }
+
+  return (0)
 }
 
 
