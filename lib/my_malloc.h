@@ -19,7 +19,6 @@ enum my_malloc_err ERRNO;
 
 int     my_log(int n, int b);
 void*    my_malloc(size_t);
-void     my_free(void *);
 void*    my_calloc( size_t num, size_t size);
 void*    my_memory_move(void* dest, const void* src, size_t num_bytes);
 void* 	 init_heap();
