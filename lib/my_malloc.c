@@ -289,18 +289,16 @@ void     *my_malloc    (size_t block_size)
 
 }
 
-void my_free(void *ptr) {
+void *my_free(void *ptr) {
 
   block_t *my_block; 
   int index;
 
   my_block = (block_t*) ( (char*)ptr - sizeof(block_t) );
 
-  if (my_block->in_use == -1){
-    //printf("in_use is %d\n",my_block->in_use );
-    //printf("free error\n" );
+  if (my_block->in_use == -1)
     return;
-  }
+
   
   if (my_block->in_use == 1)
   {
