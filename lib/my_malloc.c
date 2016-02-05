@@ -297,7 +297,7 @@ void *my_free(void *ptr) {
   my_block = (block_t*) ( (char*)ptr - sizeof(block_t) );
 
   if (my_block->in_use == -1)
-    return;
+    return (0);
 
   
   if (my_block->in_use == 1)
@@ -306,13 +306,13 @@ void *my_free(void *ptr) {
     my_block->in_use = -1;
     add_list_last(freelist, index, my_block);
     //printf("free ok\n" );
-    return;    
+    return (0);    
   }
 
   if (my_block->in_use != 1 && my_block->in_use != -1)
   {
     //printf("NOT block_t\n" );
-    return
+    return (0);
   }
 }
 
