@@ -28,5 +28,10 @@ void    *get_block(int index, int size);
 int    get_bigger(int index);
 void my_slice_block(int block_idx, int new_size_idx);
 void *my_free(void *ptr);
+void *my_realloc(void *ptr, size_t rsize);
+void *my_calloc(size_t csize);
+void      my_memcpy(void *dest, void *src, int size);
+void    *my_memset(void *s, char c, int size);
+
 
 #endif /* __MY_MALLOC_H__ */

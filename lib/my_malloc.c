@@ -140,6 +140,32 @@ int     my_log(int n, int b)
  return 1 + my_log(n / b, b);
 }
 
+void      my_memcpy(void *dest, void *src, int size)
+{
+  char      *ptr_dest;
+  char      *ptr_src;
+  int     i;
+
+  i = 0;
+  ptr_dest = (char *)dest;
+  ptr_src = (char *)src;
+  while (i < size)
+    {
+      ptr_dest[i] = ptr_src[i];
+      i += 1;
+    }
+}
+
+void    *my_memset(void *s, char c, int size)
+{
+  int   i;
+
+  i = 0;
+  while (i < size)
+    s[i++] = c;
+  return (s);
+}
+
 void    *get_block(int index, int size) {
   block_t *my_block;
   block_t *my_new_block;
@@ -312,7 +338,44 @@ void *my_free(void *ptr) {
   if (my_block->in_use != 1 && my_block->in_use != -1)
     return (0);
 
-  return (0)
+  return (0);
 }
 
+void *my_calloc(size_t csize) {
 
+  block_t new_block;
+
+  new_block = my_malloc(csize);
+
+  new_block = my_memset(new_block, '0', csize);
+
+  return (new_block);
+
+}
+
+void *my_realloc(void *ptr, size_t rsize) {
+  block_t my_block;
+  void *new_ptr;
+
+  my_block = (block_t) ((char *) ptr - sizeof(block_t));
+
+  if (!ptr) {
+    // NULL ptr. realloc should act like malloc.
+    return my_malloc(size);
+  }
+
+  if (my_block->size >= rsize) {
+    // We have enough space. Could free some once we implement split.
+    return ptr;
+  }
+
+  // Need to really realloc. Malloc new space and free old space.
+  // Then copy old data to new space.
+  new_ptr = malloc(size);
+  if (!new_ptr) {
+    return NULL; // TODO: set errno on failure.
+  }
+  my_memcpy(new_ptr, ptr, my_block->size);
+  free(ptr);
+  return (new_ptr);
+}
