@@ -323,6 +323,9 @@ void free(void *ptr) {
   block_t *my_block; 
   int index;
 
+  if (!ptr)
+    return;
+
   my_block = (block_t*) ( (char*)ptr - sizeof(block_t) );
 
   if (my_block->in_use == -1)
@@ -350,7 +353,7 @@ void *calloc(size_t count, size_t csize) {
   total  = count * size;
   new_block = malloc(total);
 
-  new_block = my_memset(new_block, '0', total);
+  new_block = my_memset(new_block, 0, total);
 
   return (new_block);
 
