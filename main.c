@@ -5,7 +5,7 @@
 ** Login   <pigot_a@etna-alternance.net>
 ** 
 ** Started on  Wed Apr 29 13:39:48 2015 Pigot Aurélien
-** Last update Sat Feb  6 13:22:41 2016 Pigot Aurélien
+** Last update Mon Feb  8 00:40:01 2016 Pigot Aurélien
 */
 
 
@@ -30,17 +30,17 @@ int main (void)
   //void *malloc_res;
   
   int i;
-  for (i = 0; i < 800; ++i)
+  for (i = 0; i < 50000; ++i)
   {
   	printf("--------------------------ROUND %d----------------------------------\n", i);
-		tmp = my_malloc(64);
+		tmp = my_malloc(6400);
     addr_tmp = &tmp;
                 printf("memset FIRST\n");
-                memset(tmp, '$', 64);
+                memset(tmp, '$', 6400);
                 //printf("memset FIRST res is: %s\n", (char*)tmp);     
     my_free(tmp);      
-		tmp = my_realloc(tmp, 512);
-		memset(tmp, '$', 512);
+		tmp = my_realloc(tmp,2000);
+		memset(tmp, '$', 2000);
                 my_free(tmp);
               
 		printf("------------------------------------------------------------\n");
@@ -58,8 +58,8 @@ int main (void)
                 my_free(addr_tmp);
     printf("------------------------------------------------------------\n");          
     void * tmp_calloc;
-    tmp_calloc = my_calloc(512);
-    memset(tmp_calloc, '$', 512);
+    tmp_calloc = my_calloc(8,64);
+    memset(tmp_calloc, '$', 64);
     my_free(tmp_calloc);
     printf("memset CALLOC\n");
                 //printf("memset res is: %s\n", (char*)res);

@@ -5,7 +5,7 @@
 ** Login   <pigot_a@etna-alternance.net>
 ** 
 ** Started on  Wed Apr 29 13:39:48 2015 Pigot Aurélien
-** Last update Sat Feb  6 12:16:02 2016 Pigot Aurélien
+** Last update Mon Feb  8 00:51:54 2016 Pigot Aurélien
 */
 
 
@@ -48,7 +48,7 @@ int     get_index(int malloc_size) {
         return 0;
 
     if (malloc_size > DEFAULT_SIZE) {
-        index = -1;
+        index = 7;
         return (index);
     }
 
@@ -198,9 +198,8 @@ void    *get_block(int index, int size) {
        my_new_block->prev = NULL;
        my_new_block->next = NULL;
        my_new_block->in_use = 1;
-       //freelist[7] = my_new_block;
+       add_list_last(freelist, get_index(size), my_new_block);
        return (my_new_block+1);
-       //my_slice_block(7, index);
     }
     //printf("get_block index is%d\n", index);
     my_block = un_free(freelist, index);
@@ -268,7 +267,7 @@ void my_slice_block(int block_idx, int new_size_idx) {
 }
 
 
-void     *malloc    (size_t block_size) 
+void     *my_malloc    (size_t block_size) 
 {
   int asked_size;
   int index;
@@ -294,6 +293,7 @@ void     *malloc    (size_t block_size)
        my_new_block->prev = NULL;
        my_new_block->next = NULL;
        my_new_block->in_use = 1;
+       add_list_last(freelist, get_index(asked_size), my_new_block);
        //freelist[7] = my_new_block;
        return (my_new_block+1);
   }
@@ -318,7 +318,7 @@ void     *malloc    (size_t block_size)
 
 }
 
-void free(void *ptr) {
+void my_free(void *ptr) {
 
   block_t *my_block; 
   int index;
@@ -346,12 +346,12 @@ void free(void *ptr) {
 
 }
 
-void *calloc(size_t count, size_t csize) {
+void *my_calloc(size_t count, size_t csize) {
 	
   void *new_block;
   size_t total;
-  total  = count * size;
-  new_block = malloc(total);
+  total  = count * csize;
+  new_block = my_malloc(total);
 
   new_block = my_memset(new_block, 0, total);
 
@@ -359,7 +359,7 @@ void *calloc(size_t count, size_t csize) {
 
 }
 
-void *realloc(void *ptr, size_t rsize) {
+void *my_realloc(void *ptr, size_t rsize) {
   block_t *my_block;
   void *new_ptr;
 
@@ -368,7 +368,7 @@ void *realloc(void *ptr, size_t rsize) {
   if (!ptr) {
     // NULL ptr. realloc should act like malloc.
     //printf("realloc !ptr\n" );
-    return malloc(rsize);
+    return my_malloc(rsize);
   }
 
   if ((my_block->size) /2 >= rsize) {
@@ -380,13 +380,13 @@ void *realloc(void *ptr, size_t rsize) {
   // Need to really realloc. Malloc new space and free old space.
   // Then copy old data to new space.
   //printf("in realloc before malloc\n");
-  new_ptr = malloc(rsize);
+  new_ptr = my_malloc(rsize);
   if (!new_ptr) {
     //printf("malloc have faild\n");
     return NULL; // TODO: set errno on failure.
   }
   //printf("before memcpy\n");
   my_memcpy(new_ptr, ptr, my_block->size);
-  free(ptr);
+  my_free(ptr);
   return (new_ptr);
 }
