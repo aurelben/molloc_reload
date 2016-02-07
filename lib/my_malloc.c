@@ -48,7 +48,7 @@ int     get_index(int malloc_size) {
         return 0;
 
     if (malloc_size > DEFAULT_SIZE) {
-        index = -1;
+        index = 7;
         return (index);
     }
 
@@ -347,7 +347,7 @@ void *calloc(size_t count, size_t csize) {
 	
   void *new_block;
   size_t total;
-  total  = count * size;
+  total  = count * csize;
   new_block = malloc(total);
 
   new_block = my_memset(new_block, '0', total);
