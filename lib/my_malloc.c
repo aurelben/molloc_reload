@@ -5,13 +5,14 @@
 ** Login   <pigot_a@etna-alternance.net>
 ** 
 ** Started on  Wed Apr 29 13:39:48 2015 Pigot Aurélien
-** Last update Thu Jan 14 01:10:06 2016 Pigot Aurélien
+** Last update Sat Feb  6 12:16:02 2016 Pigot Aurélien
 */
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <errno.h>
 #include <error.h>
 #include "my_free_list.h"
@@ -161,9 +162,11 @@ void    *my_memset(void *s, char c, int size)
   int   i;
 
   i = 0;
-  while (i < size)
-    s[i++] = c;
-  return (s);
+  while (i < size) {
+    ((char*) s)[i] = c;
+    i++;
+  }
+  return ((void*)s);
 }
 
 void    *get_block(int index, int size) {
@@ -343,7 +346,7 @@ void *my_free(void *ptr) {
 
 void *my_calloc(size_t csize) {
 
-  block_t new_block;
+  void *new_block;
 
   new_block = my_malloc(csize);
 
@@ -354,28 +357,33 @@ void *my_calloc(size_t csize) {
 }
 
 void *my_realloc(void *ptr, size_t rsize) {
-  block_t my_block;
+  block_t *my_block;
   void *new_ptr;
 
-  my_block = (block_t) ((char *) ptr - sizeof(block_t));
+  my_block = (block_t*) ((char *) ptr - sizeof(block_t));
 
   if (!ptr) {
     // NULL ptr. realloc should act like malloc.
-    return my_malloc(size);
+    printf("realloc !ptr\n" );
+    return my_malloc(rsize);
   }
 
-  if (my_block->size >= rsize) {
+  if ((my_block->size) /2 >= rsize) {
     // We have enough space. Could free some once we implement split.
+    printf("my_block->size >= rsize: %d\n", my_block->size /2);
     return ptr;
   }
 
   // Need to really realloc. Malloc new space and free old space.
   // Then copy old data to new space.
-  new_ptr = malloc(size);
+  printf("in realloc before malloc\n");
+  new_ptr = malloc(rsize);
   if (!new_ptr) {
+    printf("malloc have faild\n");
     return NULL; // TODO: set errno on failure.
   }
+  printf("before memcpy\n");
   my_memcpy(new_ptr, ptr, my_block->size);
-  free(ptr);
+  my_free(ptr);
   return (new_ptr);
 }

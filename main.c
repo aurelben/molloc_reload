@@ -5,7 +5,7 @@
 ** Login   <pigot_a@etna-alternance.net>
 ** 
 ** Started on  Wed Apr 29 13:39:48 2015 Pigot Aurélien
-** Last update Thu Jan 14 01:10:06 2016 Pigot Aurélien
+** Last update Sat Feb  6 13:22:41 2016 Pigot Aurélien
 */
 
 
@@ -30,20 +30,25 @@ int main (void)
   //void *malloc_res;
   
   int i;
-  for (i = 0; i < 80000; ++i)
+  for (i = 0; i < 800; ++i)
   {
   	printf("--------------------------ROUND %d----------------------------------\n", i);
-		tmp = my_malloc(512);
+		tmp = my_malloc(64);
     addr_tmp = &tmp;
                 printf("memset FIRST\n");
-                memset(tmp, '$', 512);
-                //printf("memset FIRST res is: %s\n", (char*)tmp);
+                memset(tmp, '$', 64);
+                //printf("memset FIRST res is: %s\n", (char*)tmp);     
+    my_free(tmp);      
+		tmp = my_realloc(tmp, 512);
+		memset(tmp, '$', 512);
                 my_free(tmp);
               
 		printf("------------------------------------------------------------\n");
     tmp2 = my_malloc(i);
                 printf("memset BIG\n");
                 memset(tmp2, '$', i);
+    //tmp2 = my_realloc(tmp2, 64);
+    //memset(tmp2, '$', 64);
                 //printf("memset BIG res is: %s\n", (char*)tmp2);
                 my_free(tmp2);
 
@@ -52,11 +57,13 @@ int main (void)
                 my_free(tmp);
                 my_free(addr_tmp);
     printf("------------------------------------------------------------\n");          
-		/*tmp = my_malloc(64);
-                memset(tmp, '$', 64);
-                printf("memset 2\n");
+    void * tmp_calloc;
+    tmp_calloc = my_calloc(512);
+    memset(tmp_calloc, '$', 512);
+    my_free(tmp_calloc);
+    printf("memset CALLOC\n");
                 //printf("memset res is: %s\n", (char*)res);
-		printf("------------------------------------------------------------\n");*/
+		printf("------------------------------------------------------------\n");
   }
   
   printf("END ------------------ testing my_malloc\n");
