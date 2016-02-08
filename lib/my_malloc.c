@@ -198,7 +198,7 @@ void    *get_block(int index, int size) {
        my_new_block->prev = NULL;
        my_new_block->next = NULL;
        my_new_block->in_use = 1;
-       add_list_last(freelist, get_index(size), my_new_block);
+       //add_list_last(freelist, get_index(size), my_new_block);
        return (my_new_block+1);
     }
     //printf("get_block index is%d\n", index);
@@ -287,9 +287,18 @@ void     *malloc    (size_t block_size)
     //my_slice_block(7, 0);
     //printf("first use\n");
   }
+  
+  index = get_index(asked_size);
 
   if (asked_size > DEFAULT_SIZE)
   {
+    if (freelist[index] !=  NULL && freelist[index]->size >= asked_size) {
+    //printf("*************** get_block check if block of size we need is here\n");
+     my_new_block = un_free(freelist, index);
+     my_new_block->in_use = 1;
+     printf("HIT\n");
+     return (my_new_block+1); 
+    }
     my_new_block =  my_sbrk(asked_size);
        my_new_block->size = asked_size;
        my_new_block->prev = NULL;
@@ -299,7 +308,7 @@ void     *malloc    (size_t block_size)
        //freelist[7] = my_new_block;
        return (my_new_block+1);
   }
-  index = get_index(asked_size);
+  
   
   new_block = get_block(index, asked_size);
 
@@ -330,8 +339,10 @@ void free(void *ptr) {
 
   my_block = (block_t*) ( (char*)ptr - sizeof(block_t) );
 
-  if (my_block->in_use == -1)
+  if (my_block->in_use == -1) {
+    ERRNO = DOUBLE_FREE_DETECTED;
     return;
+  }
 
   
   if (my_block->in_use == 1)
@@ -343,8 +354,10 @@ void free(void *ptr) {
     return ;
   }
 
-  if (my_block->in_use != 1 && my_block->in_use != -1)
+  if (my_block->in_use != 1 && my_block->in_use != -1) {
+    ERRNO = NO_ERROR;
     return;
+  }
 
 }
 
@@ -357,6 +370,9 @@ void *calloc(size_t count, size_t csize) {
 
   total  = count * csize;
   new_block = malloc(total);
+
+  if (!new_block)
+    return (NULL);
 
   new_block = my_memset(new_block, 0, total);
 

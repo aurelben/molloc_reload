@@ -19,7 +19,7 @@ int main (void)
   int log_res;
   //void *res;
   void *tmp;
-  void *tmp2;
+  
   //void *addr_tmp;
   
   log_res = my_log(16, 2);		
@@ -30,23 +30,24 @@ int main (void)
   //void *malloc_res;
   
   int i;
-  for (i = 0; i < 80; ++i)
+  for (i = 0; i < 8000; ++i)
   {
   	printf("--------------------------ROUND %d----------------------------------\n", i);
-		tmp = malloc(512);
+		tmp = malloc(3000);
     //addr_tmp = &tmp;
                 printf("memset FIRST\n");
-                memset(tmp, '$', 512);
+                memset(tmp, '$', 3000);
                 //printf("memset FIRST res is: %s\n", (char*)tmp);     
     //free(tmp);      
-		tmp = realloc(tmp,2000);
+	        tmp = realloc(tmp,4000);
 		memset(tmp, '$', 2000);
                 free(tmp);
               
 		printf("------------------------------------------------------------\n");
-    tmp2 = malloc(i);
-                printf("memset BIG\n");
-                memset(tmp2, '$', i);
+                void *tmp2;
+                tmp2 = malloc(1024);
+                printf("memset BIG \n");
+                memset(tmp2, '$', 1024);
     //tmp2 = my_realloc(tmp2, 64);
     //memset(tmp2, '$', 64);
                 //printf("memset BIG res is: %s\n", (char*)tmp2);
