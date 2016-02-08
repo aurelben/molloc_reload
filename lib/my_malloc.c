@@ -5,7 +5,7 @@
 ** Login   <pigot_a@etna-alternance.net>
 ** 
 ** Started on  Wed Apr 29 13:39:48 2015 Pigot Aurélien
-** Last update Mon Feb  8 00:51:54 2016 Pigot Aurélien
+** Last update Mon Feb  8 11:01:33 2016 Pigot Aurélien
 */
 
 
@@ -215,6 +215,8 @@ int    get_bigger(int index) {
   int find_flag;
   int i;
   find_flag = -1;
+  if(index == 7)
+    return (find_flag);
 
   for(i = index+1; i < 8; i++){
     if(freelist[i] != NULL && find_flag < 0){
@@ -293,7 +295,7 @@ void     *my_malloc    (size_t block_size)
        my_new_block->prev = NULL;
        my_new_block->next = NULL;
        my_new_block->in_use = 1;
-       add_list_last(freelist, get_index(asked_size), my_new_block);
+       //add_list_last(freelist, get_index(asked_size), my_new_block);
        //freelist[7] = my_new_block;
        return (my_new_block+1);
   }
@@ -371,7 +373,7 @@ void *my_realloc(void *ptr, size_t rsize) {
     return my_malloc(rsize);
   }
 
-  if ((my_block->size) /2 >= rsize) {
+  if (((unsigned)((my_block->size) /2)) >= rsize) {
     // We have enough space. Could free some once we implement split.
     //printf("my_block->size >= rsize: %d\n", my_block->size /2);
     return ptr;
