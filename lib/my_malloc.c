@@ -5,7 +5,7 @@
 ** Login   <pigot_a@etna-alternance.net>
 ** 
 ** Started on  Wed Apr 29 13:39:48 2015 Pigot Aurélien
-** Last update Mon Feb  8 01:01:20 2016 Pigot Aurélien
+** Last update Mon Feb  8 01:22:32 2016 Pigot Aurélien
 */
 
 
@@ -350,6 +350,9 @@ void *calloc(size_t count, size_t csize) {
 	
   void *new_block;
   size_t total;
+  if(count == 0 || csize == 0)
+    return (NULL);
+
   total  = count * csize;
   new_block = malloc(total);
 
