@@ -5,7 +5,7 @@
 ## Login   <pigot_a@etna-alternance.net>
 ## 
 ## Started on  Sat Nov  1 15:36:03 2014 PIGOT Aurélien
-## Last update Sat Jan 24 18:28:17 2015 Pigot Aurélien
+## Last update Mon Feb  8 12:23:45 2016 Pigot Aurélien
 ##
 NAME= malloc
 RM= rm -f
@@ -21,6 +21,7 @@ $(NAME): $(OBJ)
 all: $(NAME)
 clean:
 	$(RM) $(OBJ)
+	rm -f lib/*.so
 	make clean -C lib/
 fclean: clean
 	$(RM) $(NAME)

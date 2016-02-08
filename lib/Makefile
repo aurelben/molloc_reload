@@ -1,11 +1,11 @@
 ##
-## Makefile for my_malloc in /home/shuiei/Documents/ETNA/C/my_malloc/bene_t
+## Makefile for my_malloc in my_malloc/pigot_a
 ##
-## Made by BENE Thibault
-## Login   <bene_t@etna-alternance.net@etna-alternance.net>
+## Made by PiGOT aurelien
+## Login   <pigot_a@etna-alternance.net>
 ##
-## Started on  Mon Jan 11 16:22:56 2016 BENE Thibault
-## Last update Mon Feb  8 11:04:17 2016 Pigot Aurélien
+## Started on  Mon Jan 11 16:22:56 2016 Pigot Aurélien
+## Last update Mon Feb  8 11:10:25 2016 Pigot Aurélien
 ##
 UNAME		:= $(shell uname)
 NAME		= libmy_malloc_$(UNAME).so
@@ -26,10 +26,13 @@ tests:		$(OBJ)
 		$(CC) -c $(CFLAGS) $(PICFLAGS) $(SRC)
 		$(CC) $(PICFLAGS) $(LDFLAGS) -o $(NAME) *.o
 		@export LD_PRELOAD=./libmy_malloc_Linux.so
-		@echo "Launching ls -la"
-		@ls -la
+		#@echo "Launching unit test"
+		#@.././malloc
+		@echo "Launching ls -Rla"
+		@ls -la /
 		@echo "Launching svn st"
 		@svn st
+		#@unset LD_PRELOAD
 		@make fclean
 stress:		$(OBJ)
 		$(CC) -c $(CFLAGS) $(PICFLAGS) $(SRC)

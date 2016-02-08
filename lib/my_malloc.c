@@ -269,7 +269,7 @@ void my_slice_block(int block_idx, int new_size_idx) {
 }
 
 
-void     *my_malloc    (size_t block_size) 
+void     *malloc    (size_t block_size) 
 {
   int asked_size;
   int index;
@@ -320,7 +320,7 @@ void     *my_malloc    (size_t block_size)
 
 }
 
-void my_free(void *ptr) {
+void free(void *ptr) {
 
   block_t *my_block; 
   int index;
@@ -348,12 +348,15 @@ void my_free(void *ptr) {
 
 }
 
-void *my_calloc(size_t count, size_t csize) {
+void *calloc(size_t count, size_t csize) {
 	
   void *new_block;
   size_t total;
+  if(count == 0 || csize == 0)
+      return (NULL);
+
   total  = count * csize;
-  new_block = my_malloc(total);
+  new_block = malloc(total);
 
   new_block = my_memset(new_block, 0, total);
 
@@ -361,7 +364,7 @@ void *my_calloc(size_t count, size_t csize) {
 
 }
 
-void *my_realloc(void *ptr, size_t rsize) {
+void *realloc(void *ptr, size_t rsize) {
   block_t *my_block;
   void *new_ptr;
 
@@ -370,7 +373,7 @@ void *my_realloc(void *ptr, size_t rsize) {
   if (!ptr) {
     // NULL ptr. realloc should act like malloc.
     //printf("realloc !ptr\n" );
-    return my_malloc(rsize);
+    return (malloc(rsize));
   }
 
   if (((unsigned)((my_block->size) /2)) >= rsize) {
@@ -382,13 +385,13 @@ void *my_realloc(void *ptr, size_t rsize) {
   // Need to really realloc. Malloc new space and free old space.
   // Then copy old data to new space.
   //printf("in realloc before malloc\n");
-  new_ptr = my_malloc(rsize);
+  new_ptr = malloc(rsize);
   if (!new_ptr) {
     //printf("malloc have faild\n");
-    return NULL; // TODO: set errno on failure.
+    return (NULL); // TODO: set errno on failure.
   }
   //printf("before memcpy\n");
   my_memcpy(new_ptr, ptr, my_block->size);
-  my_free(ptr);
+  free(ptr);
   return (new_ptr);
 }

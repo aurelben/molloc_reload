@@ -20,7 +20,7 @@ int main (void)
   //void *res;
   void *tmp;
   void *tmp2;
-  void *addr_tmp;
+  //void *addr_tmp;
   
   log_res = my_log(16, 2);		
   printf("testing my log2 %d \n", log_res );
@@ -30,37 +30,37 @@ int main (void)
   //void *malloc_res;
   
   int i;
-  for (i = 0; i < 50000; ++i)
+  for (i = 0; i < 80; ++i)
   {
   	printf("--------------------------ROUND %d----------------------------------\n", i);
-		tmp = my_malloc(6400);
-    addr_tmp = &tmp;
+		tmp = malloc(512);
+    //addr_tmp = &tmp;
                 printf("memset FIRST\n");
-                memset(tmp, '$', 6400);
+                memset(tmp, '$', 512);
                 //printf("memset FIRST res is: %s\n", (char*)tmp);     
-    my_free(tmp);      
-		tmp = my_realloc(tmp,2000);
+    //free(tmp);      
+		tmp = realloc(tmp,2000);
 		memset(tmp, '$', 2000);
-                my_free(tmp);
+                free(tmp);
               
 		printf("------------------------------------------------------------\n");
-    tmp2 = my_malloc(i);
+    tmp2 = malloc(i);
                 printf("memset BIG\n");
                 memset(tmp2, '$', i);
     //tmp2 = my_realloc(tmp2, 64);
     //memset(tmp2, '$', 64);
                 //printf("memset BIG res is: %s\n", (char*)tmp2);
-                my_free(tmp2);
+                free(tmp2);
 
     printf("------------------------------------------------------------\n");
                 printf("FUCK FREE TEST\n");
-                my_free(tmp);
-                my_free(addr_tmp);
+                //free(tmp);
+                //free(addr_tmp);
     printf("------------------------------------------------------------\n");          
     void * tmp_calloc;
-    tmp_calloc = my_calloc(8,64);
+    tmp_calloc = calloc(8,64);
     memset(tmp_calloc, '$', 64);
-    my_free(tmp_calloc);
+    free(tmp_calloc);
     printf("memset CALLOC\n");
                 //printf("memset res is: %s\n", (char*)res);
 		printf("------------------------------------------------------------\n");
