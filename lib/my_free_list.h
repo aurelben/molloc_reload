@@ -16,9 +16,6 @@ typedef struct block
 
 
 block_t*     un_free(block_t** freelist, int index);
-//block_t*     add_to_back(block_t** freelist,int index, block_t* node);
-void     printListSizes(block_t** freelist);
-block_t*     removeNode(block_t** freelist, int index,block_t* node);
 block_t *add_list_last(block_t **freelist, int index, block_t *block_node);
 
 
